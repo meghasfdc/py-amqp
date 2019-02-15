@@ -91,16 +91,23 @@ else:
 
 
 class pytest(setuptools.command.test.test):
-    user_options = [('pytest-args=', 'a', 'Arguments to pass to py.test')]
+    user_options = [
+        ('pytest-args=', 'a', 'Arguments to pass to py.test'),
+        ('pytest-env=', 'E', 'Only run tests matching the environment'),
+    ]
 
     def initialize_options(self):
         setuptools.command.test.test.initialize_options(self)
         self.pytest_args = ''
+        self.pytest_env = None
 
     def run_tests(self):
         import pytest
         pytest_args = self.pytest_args.split(' ')
+        if self.pytest_env:
+            pytest_args = pytest_args + ['-E', self.pytest_env]
         sys.exit(pytest.main(pytest_args))
+
 
 setuptools.setup(
     name=NAME,
